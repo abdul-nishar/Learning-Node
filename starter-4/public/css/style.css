@@ -559,7 +559,12 @@ body {
   cursor: pointer;
 }
 
-.mapboxgl-popup {
+.leaflet-control-container .leaflet-top.leaflet-left {
+  position: absolute;
+  left: auto;
+  right: 10px;
+}
+/* .mapboxgl-popup {
   max-width: 25rem;
 }
 
@@ -570,7 +575,7 @@ body {
   font-size: 1.4rem;
   -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15) !important;
-}
+} */
 
 .section-reviews {
   margin-top: calc(0px - var(--section-rotate));
@@ -830,6 +835,7 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  justify-content: end;
 }
 .footer__nav li {
   margin-left: 1.5rem;
