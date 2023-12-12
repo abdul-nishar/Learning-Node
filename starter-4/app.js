@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const GlobalErrorHandler = require('./controllers/errorController');
@@ -127,6 +128,9 @@ app.use(
 // Serving static files
 // Here we define that all the static assets will be automatically served from a folder called 'public'
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware to compress text that is going to be sent to clients
+app.use(compression());
 
 // Routes
 app.use('/', viewRouter);
