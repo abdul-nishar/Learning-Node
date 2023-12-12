@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email address'],
   },
-  photo: String,
+  photo: {
+    type: String,
+    default: 'default.jpg',
+  },
   role: {
     type: String,
     enum: ['user', 'admin', 'guide', 'lead-guide'],
@@ -47,20 +50,21 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// userSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) return next();
+// Comment both these middlewares before importing data because it hashes the password again
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
 
-//   this.password = await bcrypt.hash(this.password, 12);
-//   this.passwordConfirmation = undefined;
-//   next();
-// });
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirmation = undefined;
+  next();
+});
 
-// userSchema.pre('save', function (next) {
-//   if (!this.isModified('password') || this.isNew) return next();
-//   // Here, we subtrat 1 sec because sometimes this middleware runs before the token is actually created and we need passwordChangedAt to check the expiry time of the token
-//   this.passwordChangedAt = Date.now() - 1000;
-//   next();
-// });
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  // Here, we subtrat 1 sec because sometimes this middleware runs before the token is actually created and we need passwordChangedAt to check the expiry time of the token
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
 
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
