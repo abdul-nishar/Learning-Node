@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -28,9 +29,17 @@ const bookingRouter = require('./routes/bookingRoutes');
 
 // Global Middleware
 
+app.use(cors());
+
+app.options('*', cors());
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Serving static files
+// Here we define that all the static assets will be automatically served from a folder called 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers
 app.use(
@@ -133,10 +142,6 @@ app.use(
     ],
   }),
 );
-
-// Serving static files
-// Here we define that all the static assets will be automatically served from a folder called 'public'
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to compress text that is going to be sent to clients
 app.use(compression());
