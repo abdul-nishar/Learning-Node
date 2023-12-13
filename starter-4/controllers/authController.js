@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, req, res) => {
     ),
     // Cookies can only be sent and received not modified
     httpOnly: true,
-    // secure: req.secure || req.headers['x-forwarded-for'] === 'https',
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
   };
 
   // the secure options makes sure that the cookie is only valid via https requests
