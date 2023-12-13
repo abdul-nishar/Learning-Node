@@ -5,6 +5,7 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+router.use(viewController.getAlerts);
 // This route is for rendering the base pug template
 router.get(
   '/',

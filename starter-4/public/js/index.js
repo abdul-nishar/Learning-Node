@@ -3,6 +3,7 @@ import { login, logout } from './login.js';
 import { loadMap } from './leaflet.js';
 import { updateSettings } from './updateSettings.js';
 import { bookTour } from './stripe.js';
+import { showAlert } from './alerts.js';
 
 // DOM elements
 const loginForm = document.querySelector('.form--login');
@@ -11,6 +12,7 @@ const mapEl = document.getElementById('map');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-settings');
 const bookBtn = document.getElementById('book-tour');
+const alertMessage = document.querySelector('body').dataset.alert;
 
 if (mapEl) {
   const locations = JSON.parse(mapEl.dataset.locations);
@@ -69,4 +71,8 @@ if (bookBtn) {
     const { tourId } = e.target.dataset;
     bookTour(tourId);
   });
+}
+
+if (alertMessage) {
+  showAlert('success', alertMessage, 20);
 }
