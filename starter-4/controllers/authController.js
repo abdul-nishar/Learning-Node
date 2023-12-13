@@ -11,7 +11,7 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRY_TIME,
   });
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expiresIn: new Date(
@@ -19,6 +19,7 @@ const createSendToken = (user, statusCode, res) => {
     ),
     // Cookies can only be sent and received not modified
     httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-for'] === 'https',
   };
 
   // the secure options makes sure that the cookie is only valid via https requests
@@ -38,7 +39,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -55,7 +56,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Please enter a valid email or password', 401));
   }
   // 3) If everything verifies, send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -208,7 +209,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // 3) Log the user in and send JWT token
-  createSendToken(user, 201, res);
+  createSendToken(user, 201, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -225,5 +226,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirmation = req.body.newPasswordConfirmation;
   await user.save();
   // // 4) Login user
-  createSendToken(user, 201, res);
+  createSendToken(user, 201, req, res);
 });
